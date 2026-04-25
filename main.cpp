@@ -17,14 +17,11 @@ HRESULT CALLBACK GetPlaceholderInfoCallback(const PRJ_CALLBACK_DATA* callbackDat
     placeholderInfo.FileBasicInfo.IsDirectory = FALSE;
     placeholderInfo.FileBasicInfo.FileSize = FILE_CONTENT_SIZE;
     placeholderInfo.FileBasicInfo.FileAttributes = FILE_ATTRIBUTE_NORMAL;
-    return PrjWritePlaceholderInfo(callbackData->NamespaceVirtualizationContext,
-                                   callbackData->FilePathName,
-                                   &placeholderInfo,
-                                   sizeof(placeholderInfo));
+    return PrjWritePlaceholderInfo(callbackData->NamespaceVirtualizationContext, callbackData->FilePathName, &placeholderInfo, sizeof(placeholderInfo));
 }
 
-HRESULT CALLBACK GetFileDataCallback(const PRJ_CALLBACK_DATA* callbackData,
-                                     UINT64 byteOffset, UINT32 length) {
+HRESULT CALLBACK GetFileDataCallback(const PRJ_CALLBACK_DATA* callbackData, UINT64 byteOffset, UINT32 length) 
+{
     if (wcscmp(callbackData->FilePathName, VIRTUAL_FILE_NAME) != 0)
         return HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND);
     if (byteOffset >= FILE_CONTENT_SIZE)
@@ -35,29 +32,27 @@ HRESULT CALLBACK GetFileDataCallback(const PRJ_CALLBACK_DATA* callbackData,
     void* buffer = PrjAllocateAlignedBuffer(callbackData->NamespaceVirtualizationContext, bytesToWrite);
     if (!buffer) return E_OUTOFMEMORY;
     memcpy(buffer, FILE_CONTENT + byteOffset, bytesToWrite);
-    HRESULT hr = PrjWriteFileData(callbackData->NamespaceVirtualizationContext,
-                                  &callbackData->DataStreamId,
-                                  buffer, byteOffset, bytesToWrite);
+    HRESULT hr = PrjWriteFileData(callbackData->NamespaceVirtualizationContext, &callbackData->DataStreamId, buffer, byteOffset, bytesToWrite);
     PrjFreeAlignedBuffer(buffer);
     return hr;
 }
 
-HRESULT CALLBACK StartEnumCallback(const PRJ_CALLBACK_DATA* callbackData, const GUID* enumerationId) {
+HRESULT CALLBACK StartEnumCallback(const PRJ_CALLBACK_DATA* callbackData, const GUID* enumerationId) 
+{
     // Начинаем новое перечисление — сбрасываем флаг
     g_fileAdded = FALSE;
     return S_OK;
 }
 
-HRESULT CALLBACK GetEnumCallback(const PRJ_CALLBACK_DATA* callbackData,
-                                 const GUID* enumerationId,
-                                 PCWSTR searchExpression,
-                                 PRJ_DIR_ENTRY_BUFFER_HANDLE dirEntryBufferHandle) {
+HRESULT CALLBACK GetEnumCallback(const PRJ_CALLBACK_DATA* callbackData, const GUID* enumerationId, PCWSTR searchExpression, PRJ_DIR_ENTRY_BUFFER_HANDLE dirEntryBufferHandle) 
+{
     // Работаем только с корнем
     if (wcslen(callbackData->FilePathName) != 0)
         return S_FALSE;
 
     // Если файл уже добавили в этом перечислении, больше не добавляем
-    if (g_fileAdded) {
+    if (g_fileAdded) 
+    {
         return S_FALSE;
     }
 
@@ -67,19 +62,23 @@ HRESULT CALLBACK GetEnumCallback(const PRJ_CALLBACK_DATA* callbackData,
     fileInfo.FileAttributes = FILE_ATTRIBUTE_NORMAL;
 
     HRESULT hr = PrjFillDirEntryBuffer(VIRTUAL_FILE_NAME, &fileInfo, dirEntryBufferHandle);
-    if (SUCCEEDED(hr)) {
+    if (SUCCEEDED(hr)) 
+    {
         g_fileAdded = TRUE;          // помечаем, что файл добавлен
         return S_OK;                 
     }
     return hr;
 }
 
-HRESULT CALLBACK EndEnumCallback(const PRJ_CALLBACK_DATA* callbackData, const GUID* enumerationId) {
+HRESULT CALLBACK EndEnumCallback(const PRJ_CALLBACK_DATA* callbackData, const GUID* enumerationId) 
+{
     return S_OK;
 }
 
-int wmain(int argc, wchar_t* argv[]) {
-    if (argc < 2) {
+int wmain(int argc, wchar_t* argv[]) 
+{
+    if (argc < 2) 
+    {
         wprintf(L"Usage: %s <virtual_root_path>\n", argv[0]);
         return 1;
     }
