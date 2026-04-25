@@ -10,7 +10,8 @@ static const DWORD FILE_CONTENT_SIZE = (DWORD)(sizeof(FILE_CONTENT) - 1);
 // Флаг: был ли уже добавлен файл в текущем перечислении
 static BOOL g_fileAdded = FALSE;
 
-HRESULT CALLBACK GetPlaceholderInfoCallback(const PRJ_CALLBACK_DATA* callbackData) {
+HRESULT CALLBACK GetPlaceholderInfoCallback(const PRJ_CALLBACK_DATA* callbackData)
+{
     if (wcscmp(callbackData->FilePathName, VIRTUAL_FILE_NAME) != 0)
         return HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND);
     PRJ_PLACEHOLDER_INFO placeholderInfo = {};
