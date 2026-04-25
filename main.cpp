@@ -69,10 +69,7 @@ HRESULT CALLBACK GetEnumCallback(const PRJ_CALLBACK_DATA* callbackData,
     HRESULT hr = PrjFillDirEntryBuffer(VIRTUAL_FILE_NAME, &fileInfo, dirEntryBufferHandle);
     if (SUCCEEDED(hr)) {
         g_fileAdded = TRUE;          // помечаем, что файл добавлен
-        return S_OK;                 // говорим, что есть ещё записи? Нет, лучше S_FALSE?
-        // Проблема: если вернуть S_OK, ProjFS снова вызовет GetEnumCallback,
-        // но мы уже поставили флаг, и следующий вызов вернёт S_FALSE.
-        // Так мы получим ровно один файл.
+        return S_OK;                 
     }
     return hr;
 }
